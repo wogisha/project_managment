@@ -28,7 +28,8 @@ public class ProjectRepositoryImplTest {
 
         emf = Persistence.createEntityManagerFactory("cs544-test");
         em = emf.createEntityManager();
-
+        tx = em.getTransaction();
+        tx.begin();
         projectRepository = new ProjectRepositoryImpl();
         projectRepository.setEntityManager(em);
     }
@@ -45,6 +46,7 @@ public class ProjectRepositoryImplTest {
 
         projectRepository.createProject(p);
 
+        tx.commit();
         em.clear();
 
         projects = projectRepository.getProjectList();
@@ -76,6 +78,7 @@ public class ProjectRepositoryImplTest {
         projectRepository.createProject(p1);
         projectRepository.createProject(p2);
 
+        tx.commit();
         em.clear();
 
         List<Task>  tasks = projectRepository.getProjectTask(p1);
@@ -103,6 +106,7 @@ public class ProjectRepositoryImplTest {
         projectRepository.createProject(p1);
         projectRepository.createProject(p2);
 
+        tx.commit();
         em.clear();
 
         List<Project> projectsStarted = projectRepository.getProjectByStatus(Statuses.STARTED);
@@ -142,6 +146,7 @@ public class ProjectRepositoryImplTest {
 
         projectRepository.createProject(p2);
 
+        tx.commit();
         em.clear();
 
         List<Project> projects = projectRepository.getProjectByResourcetype(AssetResource.class);
@@ -194,6 +199,7 @@ public class ProjectRepositoryImplTest {
 
         projectRepository.createProject(p2);
 
+        tx.commit();
         em.clear();
 
         List<Project> projectsWithAssetResource = projectRepository.getProjectByResourcetype(AssetResource.class);
@@ -210,8 +216,7 @@ public class ProjectRepositoryImplTest {
 
     @After
     public void tearDown() {
-
-
+        
         if (em != null) {
             em.close();
         }

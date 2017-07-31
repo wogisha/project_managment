@@ -43,7 +43,7 @@ public class ProjectRepositoryImpl implements ProjectRepository {
         List<Project> projects;
         if (resourceType == Resource.class) {
             projects = this.getProjectList();
-          
+
         } else {
             projects = entityManager.createQuery("select p from Project p left join p.tasks t left join  t.resources r where r.class = " + resourceType.getSimpleName(), Project.class).getResultList();
         }
@@ -52,15 +52,7 @@ public class ProjectRepositoryImpl implements ProjectRepository {
 
     @Override
     public void createProject(Project project) {
-
-        EntityTransaction tx = entityManager.getTransaction();
-        tx.begin();
-
         entityManager.persist(project);
-
-        tx.commit();
-
-
     }
 
     @Override
