@@ -216,7 +216,7 @@ public class ProjectRepositoryImplTest {
 
     @After
     public void tearDown() {
-        
+
         if (em != null) {
             em.close();
         }

@@ -6,7 +6,6 @@ import edu.mum.domain.Statuses;
 import edu.mum.domain.Task;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.util.List;
 
 /**
