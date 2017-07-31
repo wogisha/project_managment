@@ -30,7 +30,7 @@ public class Project {
     @Embedded
     private TimeFrame timeFrame;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 
     private List<Beneficiary> beneficiaries = new ArrayList<>();
 
@@ -38,10 +38,10 @@ public class Project {
     @ElementCollection(fetch = FetchType.LAZY)
     private List<byte[]> beneficiaryFiles = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Beneficiary> volunters = new ArrayList<>();
 
 
@@ -129,5 +129,10 @@ public class Project {
 
     public void setStatus(Statuses status) {
         this.status = status;
+    }
+
+    public void addTask(Task task) {
+        getTasks().add(task);
+
     }
 }

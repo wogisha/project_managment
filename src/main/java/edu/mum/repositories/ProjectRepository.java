@@ -16,7 +16,7 @@ public interface ProjectRepository {
 
     List<Project> getProjectByStatus(Statuses status);
 
-    List<Project> getProjectByResourcetype(Resource resource);
+    List<Project> getProjectByResourcetype(Class resourceType);
 
     void createProject(Project project);
 

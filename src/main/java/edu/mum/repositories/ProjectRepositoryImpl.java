@@ -17,29 +17,37 @@ public class ProjectRepositoryImpl implements ProjectRepository {
 
     @Override
     public List<Project> getProjectList() {
-        EntityTransaction tx = entityManager.getTransaction();
-        tx.begin();
-
-        List<Project> projects = entityManager.createQuery("from Project ", Project.class).getResultList();
-
-        tx.commit();
-
-        return projects;
+        return entityManager.createQuery("from Project ", Project.class).getResultList();
     }
 
     @Override
     public List<Task> getProjectTask(Project project) {
-        return null;
+        Project p = entityManager.createQuery("select distinct p from Project p " +
+                " left join fetch p.tasks t where p.id = :id ", Project.class)
+                .setParameter("id", project.getId())
+                .getSingleResult();
+
+        return p.getTasks();
+
     }
 
     @Override
     public List<Project> getProjectByStatus(Statuses status) {
-        return null;
+        return entityManager.createQuery("from Project p where p.status = :status ", Project.class)
+                .setParameter("status", Statuses.valueOf(status.toString()))
+                .getResultList();
     }
 
     @Override
-    public List<Project> getProjectByResourcetype(Resource resource) {
-        return null;
+    public List<Project> getProjectByResourcetype(Class resourceType) {
+        List<Project> projects;
+        if (resourceType == Resource.class) {
+            projects = this.getProjectList();
+          
+        } else {
+            projects = entityManager.createQuery("select p from Project p left join p.tasks t left join  t.resources r where r.class = " + resourceType.getSimpleName(), Project.class).getResultList();
+        }
+        return projects;
     }
 
     @Override
@@ -47,8 +55,11 @@ public class ProjectRepositoryImpl implements ProjectRepository {
 
         EntityTransaction tx = entityManager.getTransaction();
         tx.begin();
+
         entityManager.persist(project);
+
         tx.commit();
+
 
     }
 

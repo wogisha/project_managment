@@ -7,5 +7,17 @@ import javax.persistence.Entity;
  */
 @Entity
 public class VolunterResource extends AssetResource {
-    String skill;
+    private String skill;
+
+
+    public String getSkill() {
+
+        return skill;
+    }
+
+    public void setSkill(String skill) {
+        this.skill = skill;
+    }
+
+
 }

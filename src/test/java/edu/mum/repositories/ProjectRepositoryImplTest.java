@@ -1,6 +1,6 @@
 package edu.mum.repositories;
 
-import edu.mum.domain.Project;
+import edu.mum.domain.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +25,7 @@ public class ProjectRepositoryImplTest {
 
     @Before
     public void setUp() {
+
         emf = Persistence.createEntityManagerFactory("cs544-test");
         em = emf.createEntityManager();
 
@@ -49,6 +50,162 @@ public class ProjectRepositoryImplTest {
         projects = projectRepository.getProjectList();
 
         assertEquals(projects.size(), 1);
+    }
+
+    @Test
+    public void testGetProjectTask() {
+        Project p1 = new Project();
+
+        p1.setLocation("mum");
+        Task task = new Task();
+
+        task.setDescription("task 1");
+
+        p1.addTask(task);
+
+        Task task2 = new Task();
+        task2.setDescription("task 2");
+        p1.addTask(task2);
+
+
+        Project p2 = new Project();
+
+        p2.setLocation("mum");
+
+
+        projectRepository.createProject(p1);
+        projectRepository.createProject(p2);
+
+        em.clear();
+
+        List<Task>  tasks = projectRepository.getProjectTask(p1);
+        List<Task>  tasks2 = projectRepository.getProjectTask(p2);
+
+        assertEquals(tasks.size(), 2);
+        assertEquals(tasks2.size(), 0);
+    }
+
+
+    @Test
+    public void testGetByStatus() {
+
+        Project p1 = new Project();
+
+        p1.setLocation("mum2");
+        p1.setStatus(Statuses.STARTED);
+
+        Project p2 = new Project();
+
+        p2.setLocation("mum2");
+        p2.setStatus(Statuses.COMPLETED);
+
+
+        projectRepository.createProject(p1);
+        projectRepository.createProject(p2);
+
+        em.clear();
+
+        List<Project> projectsStarted = projectRepository.getProjectByStatus(Statuses.STARTED);
+        List<Project> projectsCompleted = projectRepository.getProjectByStatus(Statuses.COMPLETED);
+        List<Project> projectsInProgress = projectRepository.getProjectByStatus(Statuses.IN_PROGRESS);
+
+        assertEquals(projectsStarted.size(),1);
+        assertEquals(projectsCompleted.size(),1);
+        assertEquals(projectsInProgress.size(),0);
+
+    }
+
+    @Test
+    public void testGetByResourceTypeZero() {
+
+        Project p1 = new Project();
+
+        p1.setLocation("mum");
+
+        Task task = new Task();
+
+        task.setDescription("task 1");
+
+        p1.addTask(task);
+
+        Task task2 = new Task();
+        task2.setDescription("task 2");
+        p1.addTask(task2);
+
+
+        Project p2 = new Project();
+
+        p2.setLocation("mum");
+
+
+        projectRepository.createProject(p1);
+
+        projectRepository.createProject(p2);
+
+        em.clear();
+
+        List<Project> projects = projectRepository.getProjectByResourcetype(AssetResource.class);
+
+        assertEquals(projects.size(),0);
+
+    }
+
+    @Test
+    public void testGetByResourceTypeOne() {
+
+        Project p1 = new Project();
+
+        p1.setLocation("mum");
+
+
+        AssetResource assetResource = new AssetResource();
+
+        assetResource.setName("assetResource");
+        assetResource.setQuantity(1);
+
+        Task task = new Task();
+
+        task.addResource(assetResource);
+
+
+        task.setDescription("task 1");
+
+        p1.addTask(task);
+
+
+        VolunterResource volunterResource = new VolunterResource();
+
+        volunterResource.setName("volunteer");
+
+
+        Task task2 = new Task();
+        task2.addResource(volunterResource);
+
+        task2.setDescription("task 2");
+        p1.addTask(task2);
+
+
+        Project p2 = new Project();
+
+        p2.setLocation("mum");
+
+
+        projectRepository.createProject(p1);
+
+        projectRepository.createProject(p2);
+
+        em.clear();
+
+        List<Project> projectsWithAssetResource = projectRepository.getProjectByResourcetype(AssetResource.class);
+        List<Project> projectsWithVolunteerResource = projectRepository.getProjectByResourcetype(AssetResource.class);
+        List<Project> projectsAllResource = projectRepository.getProjectByResourcetype(Resource.class);
+
+        assertEquals(projectsWithAssetResource.size(),1);
+        assertEquals(projectsWithVolunteerResource.size(),1);
+        assertEquals(projectsAllResource.size(),2);
+
+
+
     }
 
     @After
